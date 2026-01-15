@@ -1,23 +1,5 @@
 import Image from "next/image";
 
-const partners = [
-    {
-        name: "National Geographic Society",
-        logo: "/logos/national_geographic_society.png",
-        width: 150,
-    },
-    {
-        name: "The Nature Conservancy",
-        logo: "/logos/the_nature_conservancy.jpg",
-        width: 150,
-    },
-    {
-        name: "Extern",
-        logo: "/logos/extern.svg",
-        width: 120,
-    },
-];
-
 export function Partners() {
     return (
         <section className="py-12 bg-muted/50 border-y border-border">
@@ -26,20 +8,28 @@ export function Partners() {
                     In collaboration with
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-                    {partners.map((partner) => (
-                        <div
-                            key={partner.name}
-                            className="grayscale hover:grayscale-0 transition-all duration-300"
-                        >
-                            <Image
-                                src={partner.logo}
-                                alt={partner.name}
-                                width={partner.width}
-                                height={50}
-                                className="h-12 w-auto object-contain"
-                            />
-                        </div>
-                    ))}
+                    {/* National Geographic Society */}
+                    <div className="text-center group">
+                        <span className="text-lg md:text-xl font-bold tracking-wide text-muted-foreground group-hover:text-foreground transition-colors">
+                            National Geographic Society
+                        </span>
+                    </div>
+                    {/* Extern */}
+                    <div className="grayscale hover:grayscale-0 transition-all duration-300">
+                        <Image
+                            src="/logos/extern.svg"
+                            alt="Extern"
+                            width={120}
+                            height={50}
+                            className="h-12 w-auto object-contain"
+                        />
+                    </div>
+                    {/* The Nature Conservancy */}
+                    <div className="text-center group">
+                        <span className="text-lg md:text-xl font-bold tracking-wide text-muted-foreground group-hover:text-foreground transition-colors">
+                            The Nature Conservancy
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>

@@ -85,26 +85,16 @@ export function Footer() {
                     </div>
                 </div>
 
-                {/* Partner Logos */}
+                {/* Partners */}
                 <div className="mt-12 pt-8 border-t border-background/20">
                     <p className="text-center text-sm text-background/50 mb-6">
                         In collaboration with
                     </p>
                     <div className="flex flex-wrap items-center justify-center gap-8">
-                        <Image
-                            src="/logos/national_geographic_society.png"
-                            alt="National Geographic Society"
-                            width={120}
-                            height={40}
-                            className="h-10 w-auto opacity-70 hover:opacity-100 transition-opacity"
-                        />
-                        <Image
-                            src="/logos/the_nature_conservancy.jpg"
-                            alt="The Nature Conservancy"
-                            width={120}
-                            height={40}
-                            className="h-10 w-auto opacity-70 hover:opacity-100 transition-opacity"
-                        />
+                        <span className="text-sm md:text-base font-semibold text-background/70 hover:text-background transition-colors">
+                            National Geographic Society
+                        </span>
+                        <span className="text-background/30">•</span>
                         <Image
                             src="/logos/extern.svg"
                             alt="Extern"
@@ -112,6 +102,10 @@ export function Footer() {
                             height={32}
                             className="h-8 w-auto invert opacity-70 hover:opacity-100 transition-opacity"
                         />
+                        <span className="text-background/30">•</span>
+                        <span className="text-sm md:text-base font-semibold text-background/70 hover:text-background transition-colors">
+                            The Nature Conservancy
+                        </span>
                     </div>
                 </div>
 

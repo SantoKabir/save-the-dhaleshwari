@@ -55,6 +55,9 @@ A comprehensive guide for managing the "Save the Dhaleshwari" website.
 
 ## Supabase Dashboard
 
+### Account
+Log in to supabase with your **GitHub** account to see your project.
+
 ### Project Overview
 
 Your Supabase project handles:
@@ -107,6 +110,12 @@ The `media` bucket is set to **public**. This means images and videos are access
 ```
 https://[project-id].supabase.co/storage/v1/object/public/media/[folder]/[filename]
 ```
+
+---
+
+## Deployment
+
+This website is deployed with [Vercel](https://vercel.com). Sign in to vercel with your GitHub account to see the details.
 
 ---
 

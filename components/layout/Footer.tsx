@@ -73,7 +73,7 @@ export function Footer() {
                             <li className="flex items-center gap-2 text-background/70">
                                 <Linkedin className="h-4 w-4" />
                                 <a
-                                    href="https://linkedin.com/in/santokabir"
+                                    href="https://www.linkedin.com/in/santo-kabir-ahmed"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="hover:text-background transition-colors"

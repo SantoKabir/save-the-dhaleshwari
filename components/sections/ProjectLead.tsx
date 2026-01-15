@@ -70,7 +70,7 @@ export function ProjectLead() {
                                         asChild
                                     >
                                         <a
-                                            href="https://linkedin.com/in/santokabir"
+                                            href="https://www.linkedin.com/in/santo-kabir-ahmed"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >

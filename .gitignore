@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+_assets/
 
 # debug
 npm-debug.log*
@@ -40,3 +41,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ORM
+generated/
+
+# IDEs and editors
+CLAUDE.md
+.claude
+.vscode
+.idea
+/lib/generated/prisma

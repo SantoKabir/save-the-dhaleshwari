@@ -8,14 +8,14 @@ const timelineEvents = [
         year: "2017",
         title: "Tannery Relocation to Savar",
         description:
-            "Over 150 tanneries relocate from Hazaribagh, Dhaka to Hemayetpur, Savar. Untreated chromium-laden industrial waste begins discharging into the Dhaleshwari River, replacing one environmental crisis with another.",
+            "Over 150 tanneries relocate from Hazaribagh, Dhaka to Hemayetpur, Savar. Untreated/poorly-treated chromium-laden industrial waste begins discharging into the Dhaleshwari River, replacing one environmental crisis with another.",
         status: "problem",
     },
     {
         year: "Jun 2025",
         title: "Research Initiative Founded",
         description:
-            "Santo Kabir Ahmed establishes the Dhaleshwari River Pollution Awareness project, supported by the National Geographic Society, The Nature Conservancy, and Extern. Field research planning begins.",
+            "The Dhaleshwari River Pollution Awareness project was established, supported by the National Geographic Society, The Nature Conservancy, and Extern. Field research planning begins.",
         status: "progress",
     },
     {

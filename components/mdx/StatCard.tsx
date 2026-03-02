@@ -11,6 +11,33 @@ interface StatItem {
     description?: string;
 }
 
+/**
+ * Render a string with inline markdown: **bold**, *italic*, <sup>, <sub>,
+ * line breaks. All other content is HTML-escaped, so only the above patterns
+ * produce actual markup. Used for stat labels & descriptions so admins can
+ * write things like "Cr<sup>6+</sup>" or "**Key Finding**".
+ */
+function renderInline(text: string): string {
+    // 1. Escape raw HTML except for explicitly whitelisted tags we'll add
+    const escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    return (
+        escaped
+            // **bold**
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+            // *italic* (single star or underscore, non-greedy)
+            .replace(/(?<![*_])[*_]((?:[^*_])+)[*_](?![*_])/g, "<em>$1</em>")
+            // ^^superscript^^
+            .replace(/\^\^(.*?)\^\^/g, "<sup>$1</sup>")
+            // ~~subscript~~
+            .replace(/~~(.*?)~~/g, "<sub>$1</sub>")
+            // explicit line breaks
+            .replace(/\n/g, "<br />")
+    );
+}
+
 /** Single animated counter */
 function AnimatedStat({ value, suffix = "", label, description }: StatItem) {
     const ref = useRef<HTMLSpanElement>(null);
@@ -37,9 +64,17 @@ function AnimatedStat({ value, suffix = "", label, description }: StatItem) {
             <div className="text-4xl md:text-5xl font-bold font-serif text-primary mb-2">
                 <span ref={ref}>0{suffix}</span>
             </div>
-            <p className="font-semibold text-lg mb-1">{label}</p>
+            <p
+                className="font-semibold text-lg mb-1"
+                dangerouslySetInnerHTML={{ __html: renderInline(label) }}
+            />
             {description && (
-                <p className="text-sm text-muted-foreground">{description}</p>
+                <p
+                    className="text-sm text-muted-foreground"
+                    dangerouslySetInnerHTML={{
+                        __html: renderInline(description),
+                    }}
+                />
             )}
         </div>
     );

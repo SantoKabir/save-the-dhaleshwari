@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { MDXBlockEditor } from "@/components/admin/mdx-editor/MDXBlockEditor";
 import {
     Table,
     TableBody,
@@ -15,10 +16,25 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Check, X, ExternalLink } from "lucide-react";
+import {
+    Plus,
+    Pencil,
+    Trash2,
+    Check,
+    X,
+    ExternalLink,
+    Video,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { createEvent, updateEvent, deleteEvent } from "@/app/actions/events";
+import {
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    addEventMedia,
+    updateEventMedia,
+    deleteEventMedia,
+} from "@/app/actions/events";
 import type { Event, EventMedia } from "@/lib/generated/prisma";
 
 type EventWithMedia = Event & { media: EventMedia[] };
@@ -278,6 +294,23 @@ export function EventsAdmin({ initialEvents }: EventsAdminProps) {
                                                             event.cover_image_url ??
                                                             ""
                                                         }
+                                                        eventId={event.id}
+                                                        eventMedia={event.media}
+                                                        onMediaChange={(
+                                                            media,
+                                                        ) =>
+                                                            setEvents((prev) =>
+                                                                prev.map((e) =>
+                                                                    e.id ===
+                                                                    event.id
+                                                                        ? {
+                                                                              ...e,
+                                                                              media,
+                                                                          }
+                                                                        : e,
+                                                                ),
+                                                            )
+                                                        }
                                                     />
                                                 </div>
                                             </TableCell>
@@ -293,6 +326,172 @@ export function EventsAdmin({ initialEvents }: EventsAdminProps) {
     );
 }
 
+// ── EventMediaManager ────────────────────────────────────────────────────────
+function EventMediaManager({
+    eventId,
+    initialMedia,
+    onMediaChange,
+}: {
+    eventId: string;
+    initialMedia: EventMedia[];
+    onMediaChange: (media: EventMedia[]) => void;
+}) {
+    const [media, setMedia] = useState<EventMedia[]>(initialMedia);
+    const [isPending, startTransition] = useTransition();
+    const [newUrl, setNewUrl] = useState("");
+    const [newCaption, setNewCaption] = useState("");
+    const [newMediaType, setNewMediaType] = useState<
+        "IMAGE" | "VIDEO" | "CHART"
+    >("IMAGE");
+    const uploadRef = useRef<string | null>(null);
+
+    const handleAdd = () => {
+        if (!newUrl) return;
+        startTransition(async () => {
+            try {
+                const item = await addEventMedia({
+                    event_id: eventId,
+                    media_url: newUrl,
+                    media_type: newMediaType,
+                    caption: newCaption || undefined,
+                    sort_order: media.length,
+                });
+                const next = [...media, item];
+                setMedia(next);
+                onMediaChange(next);
+                uploadRef.current = null;
+                setNewUrl("");
+                setNewCaption("");
+                toast.success("Media added");
+            } catch {
+                toast.error("Failed to add media");
+            }
+        });
+    };
+
+    const handleDelete = (id: string, url: string) => {
+        startTransition(async () => {
+            try {
+                await deleteFile(url);
+                await deleteEventMedia(id);
+                const next = media.filter((m) => m.id !== id);
+                setMedia(next);
+                onMediaChange(next);
+                toast.success("Media deleted");
+            } catch {
+                toast.error("Failed to delete media");
+            }
+        });
+    };
+
+    const handleCaptionBlur = (id: string, caption: string) => {
+        updateEventMedia(id, { caption }).catch(() =>
+            toast.error("Failed to update caption"),
+        );
+    };
+
+    return (
+        <div className="border border-border rounded-xl p-4 space-y-4">
+            <p className="text-sm font-semibold">Event Media Gallery</p>
+            {media.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {media.map((m) => (
+                        <div
+                            key={m.id}
+                            className="group relative border border-border rounded-lg overflow-hidden"
+                        >
+                            {m.media_type === "IMAGE" ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={m.media_url}
+                                    alt={m.caption ?? ""}
+                                    className="w-full aspect-video object-cover"
+                                />
+                            ) : (
+                                <div className="w-full aspect-video bg-muted flex items-center justify-center">
+                                    <Video className="h-8 w-8 text-muted-foreground" />
+                                    <span className="ml-2 text-xs text-muted-foreground">
+                                        {m.media_type}
+                                    </span>
+                                </div>
+                            )}
+                            <div className="p-2">
+                                <Input
+                                    defaultValue={m.caption ?? ""}
+                                    placeholder="Caption…"
+                                    className="h-7 text-xs"
+                                    onBlur={(e) =>
+                                        handleCaptionBlur(m.id, e.target.value)
+                                    }
+                                />
+                            </div>
+                            <button
+                                className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full h-5 w-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleDelete(m.id, m.media_url)}
+                                disabled={isPending}
+                            >
+                                <X className="h-3 w-3" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+            {/* Add new media */}
+            <div className="border-t border-border pt-4 space-y-3">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    Add Media
+                </p>
+                <div className="flex gap-2 items-center">
+                    <select
+                        value={newMediaType}
+                        onChange={(e) =>
+                            setNewMediaType(
+                                e.target.value as "IMAGE" | "VIDEO" | "CHART",
+                            )
+                        }
+                        className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                        <option value="IMAGE">Image</option>
+                        <option value="VIDEO">Video</option>
+                        <option value="CHART">Chart image</option>
+                    </select>
+                </div>
+                {newMediaType === "IMAGE" ? (
+                    <ImageUploadField
+                        value={newUrl}
+                        onChange={setNewUrl}
+                        folder="images"
+                        label=""
+                        cleanupRef={uploadRef}
+                    />
+                ) : (
+                    <Input
+                        value={newUrl}
+                        onChange={(e) => setNewUrl(e.target.value)}
+                        placeholder={
+                            newMediaType === "VIDEO"
+                                ? "Video URL (Supabase storage)"
+                                : "Chart image URL"
+                        }
+                    />
+                )}
+                <Input
+                    value={newCaption}
+                    onChange={(e) => setNewCaption(e.target.value)}
+                    placeholder="Caption (optional)"
+                />
+                <Button
+                    size="sm"
+                    onClick={handleAdd}
+                    disabled={!newUrl || isPending}
+                >
+                    <Plus className="h-4 w-4 mr-1" /> Add
+                </Button>
+            </div>
+        </div>
+    );
+}
+
 function EventForm({
     form,
     setForm,
@@ -301,6 +500,9 @@ function EventForm({
     isPending,
     title,
     originalUrl,
+    eventId,
+    eventMedia,
+    onMediaChange,
 }: {
     form: typeof EMPTY;
     setForm: React.Dispatch<React.SetStateAction<typeof EMPTY>>;
@@ -309,6 +511,9 @@ function EventForm({
     isPending: boolean;
     title: string;
     originalUrl: string;
+    eventId?: string;
+    eventMedia?: EventMedia[];
+    onMediaChange?: (media: EventMedia[]) => void;
 }) {
     const cleanupRef = useRef<string | null>(null);
     const handleCancel = () => {
@@ -392,18 +597,12 @@ function EventForm({
                     />
                 </div>
                 <div className="sm:col-span-2">
-                    <Label>Description (Markdown/MDX)</Label>
-                    <Textarea
+                    <MDXBlockEditor
                         value={form.description}
-                        onChange={(e) =>
-                            setForm((f) => ({
-                                ...f,
-                                description: e.target.value,
-                            }))
+                        onChange={(mdx) =>
+                            setForm((f) => ({ ...f, description: mdx }))
                         }
-                        rows={10}
-                        placeholder="Full event content in Markdown. Supports MDX components: <StatCard />, <ChartEmbed />, etc."
-                        className="font-mono text-sm"
+                        label="Content"
                     />
                 </div>
                 <div className="sm:col-span-2">
@@ -416,6 +615,15 @@ function EventForm({
                         placeholder="field-research, survey, chromium"
                     />
                 </div>
+                {eventId && (
+                    <div className="sm:col-span-2">
+                        <EventMediaManager
+                            eventId={eventId}
+                            initialMedia={eventMedia ?? []}
+                            onMediaChange={onMediaChange ?? (() => {})}
+                        />
+                    </div>
+                )}
                 <div className="flex items-center gap-6">
                     <label className="flex items-center gap-2 text-sm cursor-pointer">
                         <input

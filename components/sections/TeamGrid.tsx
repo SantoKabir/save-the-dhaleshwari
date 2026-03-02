@@ -53,7 +53,11 @@ export function TeamGrid({ members }: TeamGridProps) {
         return 0;
     });
 
-    let globalIndex = 0;
+    // Pre-compute cumulative start indices outside JSX to avoid mutating a
+    // variable during render (which breaks Strict Mode double-invoke).
+    const startIndices = grouped.map((_, i) =>
+        grouped.slice(0, i).reduce((sum, g) => sum + g.members.length, 0),
+    );
 
     return (
         <section className="py-16 pb-28">
@@ -69,18 +73,14 @@ export function TeamGrid({ members }: TeamGridProps) {
 
                 {/* Grouped by division */}
                 <div className="max-w-6xl mx-auto space-y-12">
-                    {grouped.map((group) => {
-                        const startIndex = globalIndex;
-                        globalIndex += group.members.length;
-                        return (
-                            <DivisionGroup
-                                key={group.divisionId ?? "__none"}
-                                divisionName={group.division}
-                                members={group.members}
-                                startIndex={startIndex}
-                            />
-                        );
-                    })}
+                    {grouped.map((group, i) => (
+                        <DivisionGroup
+                            key={group.divisionId ?? "__none"}
+                            divisionName={group.division}
+                            members={group.members}
+                            startIndex={startIndices[i]}
+                        />
+                    ))}
                 </div>
             </div>
         </section>

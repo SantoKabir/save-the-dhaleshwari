@@ -32,13 +32,6 @@ const timelineEvents = [
             "Statistical analysis reveals a strong occupation-health correlation (Cramér's V = 0.72). Key finding: 75% report water discoloration, 68% report skin rashes, and the top community demand is tannery removal.",
         status: "progress",
     },
-    {
-        year: "2026",
-        title: "Policy Advocacy",
-        description:
-            "Comprehensive findings to be submitted to the Bangladesh Department of Environment. Community-backed recommendations for effluent treatment enforcement and clean water infrastructure to be formally presented.",
-        status: "upcoming",
-    },
 ];
 
 export function Timeline() {

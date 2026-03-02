@@ -38,7 +38,7 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     // Protect admin routes
-    if (request.nextUrl.pathname.startsWith("/admin/dashboard")) {
+    if (request.nextUrl.pathname.startsWith("/admin/dashboard") || request.nextUrl.pathname.startsWith("/admin/settings")) {
         if (!user) {
             const url = request.nextUrl.clone();
             url.pathname = "/admin";
@@ -47,7 +47,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Redirect authenticated users away from login page
-    if (request.nextUrl.pathname === "/admin" && user) {
+    if ((request.nextUrl.pathname === "/admin" || request.nextUrl.pathname === "/admin/forgot-password") && user) {
         const url = request.nextUrl.clone();
         url.pathname = "/admin/dashboard";
         return NextResponse.redirect(url);

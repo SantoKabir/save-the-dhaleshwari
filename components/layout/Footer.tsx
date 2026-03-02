@@ -116,7 +116,7 @@ export function Footer() {
                 {/* Copyright */}
                 <div className="mt-12 text-center text-sm text-footer-foreground/30">
                     <p>
-                        © {new Date().getFullYear()} Dhaleshwari River Pollution
+                        <Link href={'/admin'}>©</Link> {new Date().getFullYear()} Dhaleshwari River Pollution
                         Awareness. All rights reserved.
                     </p>
                 </div>

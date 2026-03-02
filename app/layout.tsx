@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         "field research",
         "policy advocacy",
     ],
-    authors: [{ name: "Santo Kabir Ahmed" }],
+    authors: [{ name: "Raufun Ahsan" }],
     openGraph: {
         title: "Dhaleshwari River Pollution Awareness",
         description:
@@ -63,7 +63,7 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     {children}
-                    <Toaster position="top-center" richColors />
+                    <Toaster position="top-center" richColors closeButton />
                 </ThemeProvider>
             </body>
         </html>

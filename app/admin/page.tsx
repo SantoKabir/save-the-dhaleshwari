@@ -1,16 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Lock } from "lucide-react";
+import Link from "next/link";
 
 export default function AdminLoginPage() {
-    const router = useRouter();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -24,6 +23,7 @@ export default function AdminLoginPage() {
                 setError(result.error);
             }
         } catch (err) {
+            console.error("Login error:", err);
             // Redirect happens in server action, this catch handles that
         } finally {
             setLoading(false);
@@ -76,6 +76,17 @@ export default function AdminLoginPage() {
                             />
                         </div>
 
+                        <div className="flex items-center justify-between">
+                                    <div className="text-sm">
+                                        <Link
+                                            href="/admin/forgot-password"
+                                            className="text-sm text-primary hover:underline"
+                                        >
+                                            Forgot password?
+                                        </Link>
+                                    </div>
+                                </div>
+                            
                         <Button
                             type="submit"
                             className="w-full"

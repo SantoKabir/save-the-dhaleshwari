@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { signOut } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +11,7 @@ import {
     CalendarDays,
     Megaphone,
     Droplets,
+    Settings,
 } from "lucide-react";
 import { TeamAdmin } from "./tabs/TeamAdmin";
 import { FaqAdmin } from "./tabs/FaqAdmin";
@@ -70,13 +72,23 @@ export function AdminDashboard({
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                    <form action={signOut}>
-                        <Button type="submit" variant="ghost" size="sm">
-                            <LogOut className="h-4 w-4 mr-2" />
-                            Sign out
+                        <ThemeToggle />
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Settings"
+                            asChild
+                        >
+                            <Link href="/admin/settings">
+                                <Settings className="h-4 w-4" />
+                            </Link>
                         </Button>
-                    </form>
-                    <ThemeToggle />
+                        <form action={signOut}>
+                            <Button type="submit" variant="ghost" size="sm">
+                                <LogOut className="h-4 w-4 mr-2" />
+                                Sign out
+                            </Button>
+                        </form>
                     </div>
                 </div>
             </header>

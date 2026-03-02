@@ -6,44 +6,37 @@ import { CheckCircle, Circle, AlertCircle, FlaskConical } from "lucide-react";
 const timelineEvents = [
     {
         year: "2017",
-        title: "Tannery Relocation — Problem Shifts",
+        title: "Tannery Relocation to Savar",
         description:
-            "Over 150 tanneries relocate from Hazaribagh to Savar. Chromium-laden effluent now discharges into the Dhaleshwari River, replacing one crisis with another.",
+            "Over 150 tanneries relocate from Hazaribagh, Dhaka to Hemayetpur, Savar. Untreated chromium-laden industrial waste begins discharging into the Dhaleshwari River, replacing one environmental crisis with another.",
         status: "problem",
     },
     {
         year: "Jun 2025",
-        title: "Research Initiative Launched",
+        title: "Research Initiative Founded",
         description:
-            "Santo Kabir Ahmed founds the Dhaleshwari River Pollution Awareness project, supported by National Geographic Society, The Nature Conservancy, and Extern. Field research begins.",
+            "Santo Kabir Ahmed establishes the Dhaleshwari River Pollution Awareness project, supported by the National Geographic Society, The Nature Conservancy, and Extern. Field research planning begins.",
         status: "progress",
     },
     {
-        year: "Aug 2025",
-        title: "Site Selection & Baseline Sampling",
+        year: "Jan 31, 2026",
+        title: "Community Health Survey — 56 Households",
         description:
-            "Research team identifies six study villages. Water, soil, and biological samples collected at key discharge and control sites. Baseline chromium levels documented.",
-        status: "progress",
-    },
-    {
-        year: "Oct 2025",
-        title: "Community Health Survey Design",
-        description:
-            "Survey instrument finalized with 25 structured questions covering health outcomes, water-use behaviour, and demographics. IRB-equivalent review completed.",
-        status: "progress",
-    },
-    {
-        year: "Jan 2026",
-        title: "Community Survey — 150 Respondents",
-        description:
-            "Face-to-face household interviews conducted across Lonkarchar, Savar, and surrounding areas. Key finding: 53% of skin-rash cases strongly associated with river water use (Cramér's V = 0.72).",
+            "Face-to-face structured interviews completed across Longkarchar and Jihbakata villages, Keraniganj. Questionnaire covers water sources, river changes, health outcomes, agricultural damage, and community demands.",
         status: "current",
     },
     {
-        year: "2026",
-        title: "Policy Brief & Advocacy",
+        year: "Feb 2026",
+        title: "Data Analysis & Reporting",
         description:
-            "Comprehensive findings submitted to Bangladesh Department of Environment and partner NGOs. Community health recommendations presented to district authorities.",
+            "Statistical analysis reveals a strong occupation-health correlation (Cramér's V = 0.72). Key finding: 75% report water discoloration, 68% report skin rashes, and the top community demand is tannery removal.",
+        status: "progress",
+    },
+    {
+        year: "2026",
+        title: "Policy Advocacy",
+        description:
+            "Comprehensive findings to be submitted to the Bangladesh Department of Environment. Community-backed recommendations for effluent treatment enforcement and clean water infrastructure to be formally presented.",
         status: "upcoming",
     },
 ];
@@ -63,11 +56,11 @@ export function Timeline() {
                         Research Timeline
                     </p>
                     <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6">
-                        Milestones &amp; Progress
+                        From Crisis to Evidence
                     </h2>
                     <p className="text-lg text-muted-foreground">
-                        From the tannery relocation crisis to our community
-                        health survey findings.
+                        Tracking the pollution problem from tannery relocation
+                        to community-driven research and advocacy.
                     </p>
                 </motion.div>
 

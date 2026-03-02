@@ -1,11 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
@@ -13,3 +10,105 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum MemberStatus {
+  ACTIVE
+  FORMER
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  CHART
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model Division {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  members    TeamMember[]
+
+  @@map("divisions")
+}
+
+model TeamMember {
+  id          String       @id @default(uuid())
+  name        String
+  bio         String       @db.Text
+  email       String?
+  phone       String?
+  picture_url String?
+  is_leader   Boolean      @default(false)
+  is_public   Boolean      @default(true)
+  status      MemberStatus @default(ACTIVE)
+  sort_order  Int          @default(0)
+  division_id String?
+  division    Division?    @relation(fields: [division_id], references: [id])
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+
+  @@map("team_members")
+}
+
+model FaqItem {
+  id           String   @id @default(uuid())
+  question     String
+  answer       String   @db.Text
+  sort_order   Int      @default(0)
+  is_published Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("faq_items")
+}
+
+model Event {
+  id               String       @id @default(uuid())
+  title            String
+  slug             String       @unique
+  summary          String       @db.Text
+  description      String       @db.Text
+  cover_image_url  String?
+  event_date       DateTime
+  location         String?
+  is_highlighted   Boolean      @default(false)
+  is_published     Boolean      @default(false)
+  tags             Json         @default("[]")
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
+  media            EventMedia[]
+
+  @@map("events")
+}
+
+model EventMedia {
+  id         String    @id @default(uuid())
+  event_id   String
+  event      Event     @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  media_url  String
+  media_type MediaType @default(IMAGE)
+  caption    String?
+  sort_order Int       @default(0)
+
+  @@map("event_media")
+}
+
+model Announcement {
+  id            String    @id @default(uuid())
+  title         String
+  content       String    @db.Text
+  image_url     String?
+  link_url      String?
+  is_active     Boolean   @default(true)
+  display_from  DateTime  @default(now())
+  display_until DateTime?
+  sort_order    Int       @default(0)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@map("announcements")
+}

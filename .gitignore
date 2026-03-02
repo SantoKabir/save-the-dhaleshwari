@@ -50,4 +50,5 @@ CLAUDE.md
 .claude
 .vscode
 .idea
-/lib/generated/prisma
+.kilocode
+.github/prompts

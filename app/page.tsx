@@ -1,31 +1,46 @@
+export const dynamic = "force-dynamic";
+
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { Partners } from "@/components/sections/Partners";
-import { Crisis } from "@/components/sections/Crisis";
-import { Stories } from "@/components/sections/Stories";
 import { Mission } from "@/components/sections/Mission";
+import { KeyFindings } from "@/components/sections/KeyFindings";
 import { Timeline } from "@/components/sections/Timeline";
-import { ProjectLead } from "@/components/sections/ProjectLead";
-import { VolunteerForm } from "@/components/sections/VolunteerForm";
-import { Hope } from "@/components/sections/Hope";
+import { HighlightedEvents } from "@/components/sections/HighlightedEvents";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
-  return (
-    <>
-      <Header />
-      <main>
-        <Hero />
-        <Partners />
-        <Crisis />
-        <Stories />
-        <Mission />
-        <Timeline />
-        <ProjectLead />
-        <VolunteerForm />
-        <Hope />
-      </main>
-      <Footer />
-    </>
-  );
+export default async function Home() {
+    const now = new Date();
+
+    const highlightedEvents = await prisma.event
+        .findMany({
+            where: { is_highlighted: true, is_published: true },
+            orderBy: { event_date: "desc" },
+            take: 5,
+            select: {
+                id: true,
+                title: true,
+                slug: true,
+                summary: true,
+                cover_image_url: true,
+                event_date: true,
+            },
+        })
+        .catch(() => []);
+
+    return (
+        <>
+            <Header />
+            <main>
+                <Hero />
+                <Partners />
+                <Mission />
+                <KeyFindings />
+                <Timeline />
+                <HighlightedEvents events={highlightedEvents} />
+            </main>
+            <Footer />
+        </>
+    );
 }

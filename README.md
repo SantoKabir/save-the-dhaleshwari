@@ -1,6 +1,6 @@
-# Save the Dhaleshwari - Website Guide
+# Dhaleshwari River Pollution Awareness — Website
 
-A comprehensive guide for managing the "Save the Dhaleshwari" website.
+A research-driven Next.js platform for the **Dhaleshwari River Pollution Awareness (DRPA)** initiative — a student-led project documenting industrial pollution and public health impacts along the Dhaleshwari River in Bangladesh.
 
 ---
 
@@ -8,19 +8,20 @@ A comprehensive guide for managing the "Save the Dhaleshwari" website.
 
 ### Public Pages
 
-| Page | URL | Description |
-|------|-----|-------------|
-| Home | `/` | Main landing page with hero video, crisis stats, mission, stories, timeline, project lead, and volunteer form |
-| Gallery | `/gallery` | Mosaic photo grid + video gallery from Supabase storage |
-| FAQ | `/faq` | Frequently asked questions about the program |
-| Thank You | `/thank-you` | Confirmation page after form submission |
+| Page         | URL              | Description                                                                                                              |
+| ------------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Home         | `/`              | Hero, partners bar, mission pillars, key findings with animated counters, research timeline, highlighted events carousel |
+| Events       | `/events`        | Announcements carousel + animated SVG river-path timeline of all research events                                         |
+| Event Detail | `/events/[slug]` | Rich MDX content with embedded Chart.js charts, statistics, LaTeX equations, media gallery                               |
+| Team         | `/team`          | Team leader highlight + member grid with status badges                                                                   |
+| FAQ          | `/faq`           | Admin-managed accordion FAQ                                                                                              |
 
-### Key Components
+### Key Features
 
-- **Hero Section** - Full-screen video background with call-to-action
-- **Crisis Stats** - Animated statistics about river pollution
-- **Volunteer Form** - Application form that saves to Supabase database
-- **Interactive Gallery** - Filterable images with lightbox + video embeds
+- **Dark/Light mode** — Toggle via sun/moon button in header (powered by `next-themes`)
+- **MDX event content** — Rich Markdown with custom components: `<StatCard>`, `<ChartEmbed>`, `<ImageGallery>`, `<VideoEmbed>`, `<DataTable>`
+- **Animated SVG timeline** — River-inspired scroll-tracing path on the events page (Framer Motion)
+- **LaTeX math** — Rendered via `remark-math` + `rehype-katex`
 
 ---
 
@@ -32,15 +33,21 @@ A comprehensive guide for managing the "Save the Dhaleshwari" website.
 2. Enter your admin email and password
 3. Click "Sign In"
 
-### Dashboard Features
+### Dashboard Tabs
 
-| Feature | Description |
-|---------|-------------|
-| **Statistics** | Total applications, this week, today |
-| **Search** | Filter by name, email, or university |
-| **View Details** | Click "View" to see full application |
-| **Export to Excel** | Download all applications as `.xlsx` file |
-| **Send Email** | Direct email link to applicants |
+| Tab               | Description                                                                                               |
+| ----------------- | --------------------------------------------------------------------------------------------------------- |
+| **Team Members**  | Add/edit/delete members, toggle public visibility, set leader, reorder, upload photos                     |
+| **FAQ**           | Add/edit/delete questions, toggle published, reorder                                                      |
+| **Events**        | Add/edit/delete events, MDX content editor with preview, cover image upload, toggle published/highlighted |
+| **Event Media**   | Upload/manage images and videos per event (stored in Supabase Storage)                                    |
+| **Announcements** | Add/edit/delete time-bound announcements with display dates                                               |
+
+### Features
+
+- **Search & filter** across all content types
+- **Excel export** for team and event data (ExcelJS)
+- **Image upload** to Supabase Storage with real-time preview
 
 ### Creating an Admin User
 
@@ -48,7 +55,7 @@ A comprehensive guide for managing the "Save the Dhaleshwari" website.
 2. Select your project → **Authentication** → **Users**
 3. Click **Add User**
 4. Enter email and password
-5. Make sure to set the email as verified
+5. Set the email as verified
 6. Save
 
 ---
@@ -56,77 +63,99 @@ A comprehensive guide for managing the "Save the Dhaleshwari" website.
 ## Supabase Dashboard
 
 ### Account
-Log in to supabase with your **GitHub** account to see your project.
 
-### Project Overview
+Log in to Supabase with your **GitHub** account to see your project.
 
-Your Supabase project handles:
-- **Authentication** - Admin login
-- **Database** - Volunteer applications storage
-- **Storage** - Video files for gallery
+### What Supabase Handles
 
-### Managing Volunteer Applications
+Supabase is used **only** for:
 
-Navigate to: **Table Editor** → `volunteer_applications`
+- **Authentication** — Admin login via email/password
+- **Storage** — Media files in the `media` bucket (images and videos folders)
 
-| Column | Description |
-|--------|-------------|
-| `id` | Unique identifier |
-| `name` | Applicant's full name |
-| `email` | Contact email |
-| `phone` | Phone number (optional) |
-| `age` | Age (optional) |
-| `university` | University/institution |
-| `motivation` | Why they want to volunteer |
-| `created_at` | Submission timestamp |
+All data (team, FAQ, events, announcements) is managed through **Prisma ORM** connected to the Supabase PostgreSQL database.
 
-**To delete an application:**
-1. Find the row in Table Editor
-2. Click the row → Delete
-
-### Managing Videos
+### Managing Media
 
 Navigate to: **Storage** → `media` bucket
 
-**To add a new video:**
-1. Go to Storage → `media` bucket, then the `videos` folder
-2. Click **Upload files**
-3. Select your `.mp4` file
-4. Update `app/actions/media.ts` with the new filename
+**To upload images/videos:**
 
-**To replace a video:**
-1. Delete the old file from the bucket
-2. Upload the new file with the **same filename**
-
-**To upload a new image:**
-1. Go to Storage → `media` bucket, then the `images` folder
+1. Go to Storage → `media` bucket → `images` or `videos` folder
 2. Click **Upload files**
-3. Select your `.jpg` or `.png` file
-4. Update `gallery/page.tsx` with the new filename entry
+3. Select your files
+4. Use the admin panel Event Media tab to associate media with events
 
 ### Bucket Settings
 
-The `media` bucket is set to **public**. This means images and videos are accessible without authentication via URLs like:
+The `media` bucket is set to **public**. Files are accessible via:
+
 ```
 https://[project-id].supabase.co/storage/v1/object/public/media/[folder]/[filename]
 ```
 
 ---
 
+## Database Schema (Prisma)
+
+| Model          | Table           | Key Fields                                                                                                                         |
+| -------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `TeamMember`   | `team_members`  | name, bio, email, phone, picture_url, is_leader, is_public, status (ACTIVE/FORMER), sort_order                                     |
+| `FaqItem`      | `faq_items`     | question, answer, sort_order, is_published                                                                                         |
+| `Event`        | `events`        | title, slug (unique), summary, description (MDX), cover_image_url, event_date, location, is_highlighted, is_published, tags (JSON) |
+| `EventMedia`   | `event_media`   | event_id (FK), media_url, media_type (IMAGE/VIDEO/CHART), caption, sort_order                                                      |
+| `Announcement` | `announcements` | title, content, image_url, link_url, is_active, display_from, display_until, sort_order                                            |
+
+---
+
+## Development
+
+### Setup
+
+```bash
+npm install
+cp .env.example .env.local   # Configure DATABASE_URL and Supabase keys
+npx prisma generate           # Generate Prisma Client
+npx prisma db push            # Create tables
+npx prisma db seed            # Seed initial data
+npm run dev                   # Start dev server
+```
+
+### Commands
+
+```bash
+npm run dev      # Start development server
+npm run build    # Generate Prisma Client + build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+---
+
 ## Deployment
 
-This website is deployed with [Vercel](https://vercel.com). Sign in to vercel with your GitHub account to see the details.
+This website is deployed with [Vercel](https://vercel.com). Sign in to Vercel with your GitHub account to see the details.
+
+### Environment Variables (Vercel)
+
+| Variable                        | Description                                                    |
+| ------------------------------- | -------------------------------------------------------------- |
+| `DATABASE_URL`                  | Supabase PostgreSQL connection string (use Session Pooler URL) |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL                                           |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key                                         |
 
 ---
 
 ## Quick Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Can't log into admin | Check credentials in Supabase → Authentication → Users |
-| Videos not loading | Verify filenames match exactly in `app/actions/media.ts` |
-| Form not submitting | Check Supabase → Table Editor → `volunteer_applications` exists |
-| Admin page redirects | Make sure you're logged in or cookies are enabled |
+| Issue                   | Solution                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| Can't log into admin    | Check credentials in Supabase → Authentication → Users                          |
+| Events not loading      | Verify `DATABASE_URL` is correct and accessible                                 |
+| Charts not rendering    | Check MDX syntax — `labels` and `datasets` props must use JSX expression syntax |
+| Images not loading      | Verify Supabase Storage bucket is public and domain is in `next.config.ts`      |
+| Admin page redirects    | Make sure you're logged in or cookies are enabled                               |
+| Prisma connection error | Use Session Pooler URL (not direct connection) for non-IPv6 environments        |
 
 ---
 

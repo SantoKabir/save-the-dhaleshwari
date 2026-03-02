@@ -68,8 +68,7 @@ export function TeamGrid({ members }: TeamGridProps) {
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                >   
-                </motion.div>
+                ></motion.div>
 
                 {/* Grouped by division */}
                 <div className="max-w-6xl mx-auto space-y-12">
